@@ -14,8 +14,7 @@
           "type": "string"
         }
       },
-      "type": "object",
-      "additionalProperties": false
+      "type": "object"
     },
     "spec": {
       "description": "Spec any required infrastructure.",
@@ -26,10 +25,7 @@
         },
         "compositeDeletePolicy": {
           "default": "Background",
-          "enum": [
-            "Background",
-            "Foreground"
-          ],
+          "enum": ["Background", "Foreground"],
           "type": "string"
         },
         "compositionRef": {
@@ -38,9 +34,7 @@
               "type": "string"
             }
           },
-          "required": [
-            "name"
-          ],
+          "required": ["name"],
           "type": "object",
           "additionalProperties": false
         },
@@ -50,9 +44,7 @@
               "type": "string"
             }
           },
-          "required": [
-            "name"
-          ],
+          "required": ["name"],
           "type": "object",
           "additionalProperties": false
         },
@@ -65,9 +57,7 @@
               "type": "object"
             }
           },
-          "required": [
-            "matchLabels"
-          ],
+          "required": ["matchLabels"],
           "type": "object",
           "additionalProperties": false
         },
@@ -80,17 +70,12 @@
               "type": "object"
             }
           },
-          "required": [
-            "matchLabels"
-          ],
+          "required": ["matchLabels"],
           "type": "object",
           "additionalProperties": false
         },
         "compositionUpdatePolicy": {
-          "enum": [
-            "Automatic",
-            "Manual"
-          ],
+          "enum": ["Automatic", "Manual"],
           "type": "string"
         },
         "database": {
@@ -124,11 +109,7 @@
                 "type": "string"
               }
             },
-            "required": [
-              "privileges",
-              "schema",
-              "table"
-            ],
+            "required": ["privileges", "schema", "table"],
             "type": "object",
             "additionalProperties": false
           },
@@ -149,18 +130,11 @@
                     },
                     "type": {
                       "description": "Attribute type, which must be a scalar type: S, N, or B for (S)tring, (N)umber or (B)inary data",
-                      "enum": [
-                        "S",
-                        "N",
-                        "B"
-                      ],
+                      "enum": ["S", "N", "B"],
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "name",
-                    "type"
-                  ],
+                  "required": ["name", "type"],
                   "type": "object",
                   "additionalProperties": false
                 },
@@ -173,10 +147,7 @@
               "billingMode": {
                 "default": "PAY_PER_REQUEST",
                 "description": "Controls how you are billed for read/write throughput and how you manage capacity.",
-                "enum": [
-                  "PROVISIONED",
-                  "PAY_PER_REQUEST"
-                ],
+                "enum": ["PROVISIONED", "PAY_PER_REQUEST"],
                 "type": "string"
               },
               "deleteProtectionEnabled": {
@@ -206,11 +177,7 @@
                     },
                     "projectionType": {
                       "description": "One of ALL, INCLUDE or KEYS_ONLY where ALL projects every attribute into the index, KEYS_ONLY projects\njust the hash and range key into the index, and INCLUDE projects only the keys specified in the non_Key_Attributes parameter.",
-                      "enum": [
-                        "ALL",
-                        "INCLUDE",
-                        "KEYS_ONLY"
-                      ],
+                      "enum": ["ALL", "INCLUDE", "KEYS_ONLY"],
                       "type": "string"
                     },
                     "rangeKey": {
@@ -226,11 +193,7 @@
                       "type": "integer"
                     }
                   },
-                  "required": [
-                    "hashKey",
-                    "name",
-                    "projectionType"
-                  ],
+                  "required": ["hashKey", "name", "projectionType"],
                   "type": "object",
                   "additionalProperties": false
                 },
@@ -258,11 +221,7 @@
                     },
                     "projectionType": {
                       "description": "One of ALL, INCLUDE or KEYS_ONLY where ALL projects every attribute into the index,\nKEYS_ONLY projects just the hash and range key into the index, and INCLUDE projects only the keys specified in the non_Key_Attributes parameter.",
-                      "enum": [
-                        "ALL",
-                        "INCLUDE",
-                        "KEYS_ONLY"
-                      ],
+                      "enum": ["ALL", "INCLUDE", "KEYS_ONLY"],
                       "type": "string"
                     },
                     "rangeKey": {
@@ -270,11 +229,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "name",
-                    "projectionType",
-                    "rangeKey"
-                  ],
+                  "required": ["name", "projectionType", "rangeKey"],
                   "type": "object",
                   "additionalProperties": false
                 },
@@ -327,9 +282,7 @@
                 "type": "integer"
               }
             },
-            "required": [
-              "name"
-            ],
+            "required": ["name"],
             "type": "object",
             "additionalProperties": false
           },
@@ -346,16 +299,11 @@
               "requiredAccess": {
                 "default": "READ",
                 "description": "Controls access to a DynamoDB Table Owned by another application",
-                "enum": [
-                  "READ",
-                  "READWRITE"
-                ],
+                "enum": ["READ", "READWRITE"],
                 "type": "string"
               }
             },
-            "required": [
-              "name"
-            ],
+            "required": ["name"],
             "type": "object",
             "additionalProperties": false
           },
@@ -383,10 +331,7 @@
                     "type": "integer"
                   }
                 },
-                "required": [
-                  "name",
-                  "partitions"
-                ],
+                "required": ["name", "partitions"],
                 "type": "object",
                 "additionalProperties": false
               },
@@ -400,9 +345,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "name"
-                ],
+                "required": ["name"],
                 "type": "object",
                 "additionalProperties": false
               },
@@ -424,11 +367,7 @@
               "type": "string"
             }
           },
-          "required": [
-            "apiVersion",
-            "kind",
-            "name"
-          ],
+          "required": ["apiVersion", "kind", "name"],
           "type": "object",
           "additionalProperties": false
         },
@@ -443,16 +382,11 @@
               "requiredAccess": {
                 "default": "READ",
                 "description": "Controls access to a DynamoDB Table Owned by another application",
-                "enum": [
-                  "READ",
-                  "READWRITE"
-                ],
+                "enum": ["READ", "READWRITE"],
                 "type": "string"
               }
             },
-            "required": [
-              "name"
-            ],
+            "required": ["name"],
             "type": "object",
             "additionalProperties": false
           },
@@ -665,9 +599,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "name"
-                ],
+                "required": ["name"],
                 "type": "object",
                 "additionalProperties": false
               },
@@ -683,9 +615,7 @@
               "type": "string"
             }
           },
-          "required": [
-            "name"
-          ],
+          "required": ["name"],
           "type": "object",
           "additionalProperties": false
         }
@@ -727,19 +657,12 @@
                 "type": "string"
               }
             },
-            "required": [
-              "lastTransitionTime",
-              "reason",
-              "status",
-              "type"
-            ],
+            "required": ["lastTransitionTime", "reason", "status", "type"],
             "type": "object",
             "additionalProperties": false
           },
           "type": "array",
-          "x-kubernetes-list-map-keys": [
-            "type"
-          ],
+          "x-kubernetes-list-map-keys": ["type"],
           "x-kubernetes-list-type": "map"
         },
         "connectionDetails": {
@@ -757,8 +680,6 @@
       "additionalProperties": false
     }
   },
-  "required": [
-    "spec"
-  ],
+  "required": ["spec"],
   "type": "object"
 }

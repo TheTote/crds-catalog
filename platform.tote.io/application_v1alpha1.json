@@ -1,0 +1,764 @@
+{
+  "description": "XApplication can be used to provision infrastructure.",
+  "properties": {
+    "apiVersion": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string"
+    },
+    "metadata": {
+      "properties": {
+        "name": {
+          "maxLength": 63,
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "spec": {
+      "description": "Spec any required infrastructure.",
+      "properties": {
+        "cacheAccess": {
+          "description": "CacheAccess, when true, attaches the ElastiCache Serverless connect policy of the\napplication's own gen3 repository to its IRSA role. The cache and policy are\nprovisioned in Terraform, keyed by repository name. The policy is resolved as\narn:aws:iam::<accountId>:policy/elasticache/<environment>-<repository>-cache,\nwhere <repository> comes from the platform.tote.io/repository label on the claim,\nnever from the manifest, so an application can reach only its own repository's cache.",
+          "type": "boolean"
+        },
+        "compositeDeletePolicy": {
+          "default": "Background",
+          "enum": [
+            "Background",
+            "Foreground"
+          ],
+          "type": "string"
+        },
+        "compositionRef": {
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "compositionRevisionRef": {
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "compositionRevisionSelector": {
+          "properties": {
+            "matchLabels": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "matchLabels"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "compositionSelector": {
+          "properties": {
+            "matchLabels": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "matchLabels"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "compositionUpdatePolicy": {
+          "enum": [
+            "Automatic",
+            "Manual"
+          ],
+          "type": "string"
+        },
+        "database": {
+          "description": "Database If database access is required, set the details here",
+          "items": {
+            "description": "DatabaseDetails Specify requirements for connecting to a database",
+            "properties": {
+              "account_suffix": {
+                "description": "Add a suffix to the database account username",
+                "type": "string"
+              },
+              "grant": {
+                "description": "Adds the WITH GRANT OPTION to the privileges",
+                "type": "boolean"
+              },
+              "privileges": {
+                "description": "Privileges the account should have on the schema/tables",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "schema": {
+                "description": "The Schema name where the table(s) are located",
+                "type": "string"
+              },
+              "table": {
+                "default": "*",
+                "description": "Table to apply to",
+                "type": "string"
+              }
+            },
+            "required": [
+              "privileges",
+              "schema",
+              "table"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "dynamodbTable": {
+          "items": {
+            "description": "DynamodbTable DynamoDB Table",
+            "properties": {
+              "attributes": {
+                "description": "List of nested attribute definitions. Only required for hash_Key and range_Key attributes.",
+                "items": {
+                  "description": "DynamodbTableAttributes Attributes",
+                  "properties": {
+                    "name": {
+                      "description": "The name of the attribute",
+                      "type": "string"
+                    },
+                    "type": {
+                      "description": "Attribute type, which must be a scalar type: S, N, or B for (S)tring, (N)umber or (B)inary data",
+                      "enum": [
+                        "S",
+                        "N",
+                        "B"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "type"
+                  ],
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                "type": "array"
+              },
+              "autoscalingEnabled": {
+                "description": "Whether to enable autoscaling",
+                "type": "boolean"
+              },
+              "billingMode": {
+                "default": "PAY_PER_REQUEST",
+                "description": "Controls how you are billed for read/write throughput and how you manage capacity.",
+                "enum": [
+                  "PROVISIONED",
+                  "PAY_PER_REQUEST"
+                ],
+                "type": "string"
+              },
+              "deleteProtectionEnabled": {
+                "default": true,
+                "description": "The attribute to use as the hash (partition) key. Must also be defined as an attribute.",
+                "type": "boolean"
+              },
+              "globalSecondaryIndexes": {
+                "description": "Describe a GSI for the table; subject to the normal limits on the number of GSIs, projected attributes, etc.",
+                "items": {
+                  "description": "DynamodbTableGlobalSecondaryIndex Global Secondary Indexes",
+                  "properties": {
+                    "hashKey": {
+                      "description": "The name of the hash key in the index; must be defined as an attribute in the resource.",
+                      "type": "string"
+                    },
+                    "name": {
+                      "description": "The name of the index",
+                      "type": "string"
+                    },
+                    "nonKeyAttributes": {
+                      "description": "Only required with INCLUDE as a projection type; a list of attributes to project into the index.\nThese do not need to be defined as attributes on the table.",
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "projectionType": {
+                      "description": "One of ALL, INCLUDE or KEYS_ONLY where ALL projects every attribute into the index, KEYS_ONLY projects\njust the hash and range key into the index, and INCLUDE projects only the keys specified in the non_Key_Attributes parameter.",
+                      "enum": [
+                        "ALL",
+                        "INCLUDE",
+                        "KEYS_ONLY"
+                      ],
+                      "type": "string"
+                    },
+                    "rangeKey": {
+                      "description": "The name of the range key in the index",
+                      "type": "string"
+                    },
+                    "readCapacity": {
+                      "description": "The number of read units for this index. Must be set if billing_Mode is set to PROVISIONED.",
+                      "type": "integer"
+                    },
+                    "writeCapacity": {
+                      "description": "The number of write units for this index. Must be set if billing_Mode is set to PROVISIONED.",
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "hashKey",
+                    "name",
+                    "projectionType"
+                  ],
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                "type": "array"
+              },
+              "hashKey": {
+                "description": "The attribute to use as the hash (partition) key. Must also be defined as an attribute.",
+                "type": "string"
+              },
+              "localSecondaryIndexes": {
+                "description": "Describe an LSI on the table; these can only be allocated at creation so you cannot change this definition after you have created the resource.",
+                "items": {
+                  "description": "DynamodbTableLocalSecondaryIndex Local Secondary Indexes",
+                  "properties": {
+                    "name": {
+                      "description": "The name of the index",
+                      "type": "string"
+                    },
+                    "nonKeyAttributes": {
+                      "description": "Only required with INCLUDE as a projection type; a list of attributes to project into the index.\nThese do not need to be defined as attributes on the table.",
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "projectionType": {
+                      "description": "One of ALL, INCLUDE or KEYS_ONLY where ALL projects every attribute into the index,\nKEYS_ONLY projects just the hash and range key into the index, and INCLUDE projects only the keys specified in the non_Key_Attributes parameter.",
+                      "enum": [
+                        "ALL",
+                        "INCLUDE",
+                        "KEYS_ONLY"
+                      ],
+                      "type": "string"
+                    },
+                    "rangeKey": {
+                      "description": "The name of the range key",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "projectionType",
+                    "rangeKey"
+                  ],
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                "type": "array"
+              },
+              "name": {
+                "description": "The name of the table",
+                "type": "string"
+              },
+              "rangeKey": {
+                "description": "The attribute to use as the range (sort) key. Must also be defined as an attribute.",
+                "type": "string"
+              },
+              "readCapacity": {
+                "description": "The number of read units for this table. If the BillingMode is PROVISIONED, this field should be greater than 0.",
+                "type": "integer"
+              },
+              "replicaRegions": {
+                "description": "List of region names for creating replicas for a global DynamoDB table.",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "streamEnabled": {
+                "default": false,
+                "description": "Indicates whether Streams are to be enabled (true) or disabled (false).",
+                "type": "boolean"
+              },
+              "streamViewType": {
+                "description": "When an item in the table is modified, StreamViewType determines what information is written to the table's stream.",
+                "enum": [
+                  "KEYS_ONLY",
+                  "NEW_IMAGE",
+                  "OLD_IMAGE",
+                  "NEW_AND_OLD_IMAGES"
+                ],
+                "type": "string"
+              },
+              "ttlAttribute": {
+                "description": "The name of the table attribute to store the TTL timestamp in.",
+                "type": "string"
+              },
+              "ttlEnabled": {
+                "description": "Indicates whether ttl is enabled.",
+                "type": "boolean"
+              },
+              "writeCapacity": {
+                "description": "The number of write units for this table. If the BillingMode is PROVISIONED, this field should be greater than 0.",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "dynamodbTableAccess": {
+          "items": {
+            "description": "DynamodbTableAccess DynamoDB Table Access",
+            "properties": {
+              "name": {
+                "description": "The name of the table",
+                "type": "string"
+              },
+              "requiredAccess": {
+                "default": "READ",
+                "description": "Controls access to a DynamoDB Table Owned by another application",
+                "enum": [
+                  "READ",
+                  "READWRITE"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "kafka": {
+          "description": "Kafka defines configuration for an S3 bucket",
+          "properties": {
+            "publish": {
+              "items": {
+                "description": "KafkaPublish defines topics to create and send to.",
+                "properties": {
+                  "name": {
+                    "description": "Name defines the name of the topic",
+                    "type": "string"
+                  },
+                  "owner": {
+                    "default": true,
+                    "description": "Owner whether the topic is owned by the application or not. If false, the topic is presumed to exist. Default true.",
+                    "type": "boolean"
+                  },
+                  "partitions": {
+                    "description": "Partitions defines the number of partitions the topic should have.",
+                    "minimum": 1,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "name",
+                  "partitions"
+                ],
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array"
+            },
+            "subscribe": {
+              "items": {
+                "description": "KafkaSubscribe defines topics to subscribe to.",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array"
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "resourceRef": {
+          "properties": {
+            "apiVersion": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "apiVersion",
+            "kind",
+            "name"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "s3BucketAccess": {
+          "items": {
+            "description": "DynamodbTableAccess DynamoDB Table Access",
+            "properties": {
+              "name": {
+                "description": "The name of the table",
+                "type": "string"
+              },
+              "requiredAccess": {
+                "default": "READ",
+                "description": "Controls access to a DynamoDB Table Owned by another application",
+                "enum": [
+                  "READ",
+                  "READWRITE"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "storage": {
+          "description": "Storage configuration for the application",
+          "properties": {
+            "s3": {
+              "description": "Define the S3 buckets that this application will use",
+              "items": {
+                "description": "S3Bucket defines configuration for an S3 bucket",
+                "properties": {
+                  "lifecycle_rule": {
+                    "description": "Lifecycle lifecycles to apply to the bucket",
+                    "items": {
+                      "properties": {
+                        "abortIncompleteMultipartUpload": {
+                          "description": "Configuration block that specifies the days since the initiation of an incomplete multipart upload that Amazon S3 will wait before permanently removing all parts of the upload. See below.",
+                          "items": {
+                            "properties": {
+                              "daysAfterInitiation": {
+                                "description": "Number of days after which Amazon S3 aborts an incomplete multipart upload.",
+                                "type": "number"
+                              }
+                            },
+                            "type": "object",
+                            "additionalProperties": false
+                          },
+                          "type": "array"
+                        },
+                        "expiration": {
+                          "description": "Configuration block that specifies the expiration for the lifecycle of the object in the form of date, days and, whether the object has a delete marker. See below.",
+                          "items": {
+                            "properties": {
+                              "date": {
+                                "description": "Date objects are transitioned to the specified storage class. The date value must be in RFC3339 full-date format e.g. 2023-08-22.",
+                                "type": "string"
+                              },
+                              "days": {
+                                "description": "Number of days after creation when objects are transitioned to the specified storage class. The value must be a positive integer. If both days and date are not specified, defaults to 0. Valid values depend on storage_class, see Transition objects using Amazon S3 Lifecycle for more details.",
+                                "type": "number"
+                              },
+                              "expiredObjectDeleteMarker": {
+                                "description": "Indicates whether Amazon S3 will remove a delete marker with no noncurrent versions. If set to true, the delete marker will be expired; if set to false the policy takes no action.",
+                                "type": "boolean"
+                              }
+                            },
+                            "type": "object",
+                            "additionalProperties": false
+                          },
+                          "type": "array"
+                        },
+                        "filter": {
+                          "description": "Configuration block used to identify objects that a Lifecycle Rule applies to.\nSee below.\nIf not specified, the rule will default to using prefix.\nOne of filter or prefix should be specified.",
+                          "items": {
+                            "properties": {
+                              "and": {
+                                "description": "Configuration block used to apply a logical AND to two or more predicates. See below. The Lifecycle Rule will apply to any object matching all the predicates configured inside the and block.",
+                                "items": {
+                                  "properties": {
+                                    "objectSizeGreaterThan": {
+                                      "description": "Minimum object size (in bytes) to which the rule applies.",
+                                      "type": "number"
+                                    },
+                                    "objectSizeLessThan": {
+                                      "description": "Maximum object size (in bytes) to which the rule applies.",
+                                      "type": "number"
+                                    },
+                                    "prefix": {
+                                      "description": "Prefix identifying one or more objects to which the rule applies.",
+                                      "type": "string"
+                                    },
+                                    "tags": {
+                                      "additionalProperties": {
+                                        "type": "string"
+                                      },
+                                      "description": "Key-value map of resource tags.\nAll of these tags must exist in the object's tag set in order for the rule to apply.\nIf set, must contain at least one key-value pair.",
+                                      "type": "object",
+                                      "x-kubernetes-map-type": "granular"
+                                    }
+                                  },
+                                  "type": "object",
+                                  "additionalProperties": false
+                                },
+                                "type": "array"
+                              },
+                              "objectSizeGreaterThan": {
+                                "description": "Minimum object size (in bytes) to which the rule applies.",
+                                "type": "number"
+                              },
+                              "objectSizeLessThan": {
+                                "description": "Maximum object size (in bytes) to which the rule applies.",
+                                "type": "number"
+                              },
+                              "prefix": {
+                                "description": "Prefix identifying one or more objects to which the rule applies. Defaults to an empty string (\"\") if not specified.",
+                                "type": "string"
+                              },
+                              "tag": {
+                                "description": "Configuration block for specifying a tag key and value. See below.",
+                                "items": {
+                                  "properties": {
+                                    "key": {
+                                      "description": "Name of the object key.",
+                                      "type": "string"
+                                    },
+                                    "value": {
+                                      "description": "Value of the tag.",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "type": "object",
+                                  "additionalProperties": false
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "type": "object",
+                            "additionalProperties": false
+                          },
+                          "type": "array"
+                        },
+                        "id": {
+                          "description": "Unique identifier for the rule. The value cannot be longer than 255 characters.",
+                          "type": "string"
+                        },
+                        "noncurrentVersionExpiration": {
+                          "description": "Configuration block that specifies when noncurrent object versions expire. See below.",
+                          "items": {
+                            "properties": {
+                              "newerNoncurrentVersions": {
+                                "description": "Number of noncurrent versions Amazon S3 will retain. Must be a non-zero positive integer.",
+                                "type": "number"
+                              },
+                              "noncurrentDays": {
+                                "description": "Number of days an object is noncurrent before Amazon S3 can perform the associated action.",
+                                "type": "number"
+                              }
+                            },
+                            "type": "object",
+                            "additionalProperties": false
+                          },
+                          "type": "array"
+                        },
+                        "noncurrentVersionTransition": {
+                          "description": "Set of configuration blocks that specify the transition rule for the lifecycle rule that describes when noncurrent objects transition to a specific storage class. See below.",
+                          "items": {
+                            "properties": {
+                              "newerNoncurrentVersions": {
+                                "description": "Number of noncurrent versions Amazon S3 will retain. Must be a non-zero positive integer.",
+                                "type": "number"
+                              },
+                              "noncurrentDays": {
+                                "description": "Number of days an object is noncurrent before Amazon S3 can perform the associated action.",
+                                "type": "number"
+                              },
+                              "storageClass": {
+                                "description": "Class of storage used to store the object. Valid Values: GLACIER, STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, DEEP_ARCHIVE, GLACIER_IR.",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object",
+                            "additionalProperties": false
+                          },
+                          "type": "array"
+                        },
+                        "prefix": {
+                          "description": "DEPRECATED Use filter instead.\nThis has been deprecated by Amazon S3.\nPrefix identifying one or more objects to which the rule applies.\nDefaults to an empty string (\"\") if filter is not specified.\nOne of prefix or filter should be specified.",
+                          "type": "string"
+                        },
+                        "status": {
+                          "description": "Whether the rule is currently being applied. Valid values: Enabled or Disabled.",
+                          "type": "string"
+                        },
+                        "transition": {
+                          "description": "Set of configuration blocks that specify when an Amazon S3 object transitions to a specified storage class. See below.",
+                          "items": {
+                            "properties": {
+                              "date": {
+                                "description": "Date objects are transitioned to the specified storage class. The date value must be in RFC3339 full-date format e.g. 2023-08-22.",
+                                "type": "string"
+                              },
+                              "days": {
+                                "description": "Number of days after creation when objects are transitioned to the specified storage class. The value must be a positive integer. If both days and date are not specified, defaults to 0. Valid values depend on storage_class, see Transition objects using Amazon S3 Lifecycle for more details.",
+                                "type": "number"
+                              },
+                              "storageClass": {
+                                "description": "Class of storage used to store the object. Valid Values: GLACIER, STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, DEEP_ARCHIVE, GLACIER_IR.",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object",
+                            "additionalProperties": false
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": false
+                    },
+                    "type": "array"
+                  },
+                  "name": {
+                    "description": "Name for the bucket",
+                    "type": "string"
+                  },
+                  "policy": {
+                    "description": "Policies to apply to the bucket",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array"
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "writeConnectionSecretToRef": {
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "status": {
+      "properties": {
+        "claimConditionTypes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "set"
+        },
+        "conditions": {
+          "description": "Conditions of the resource.",
+          "items": {
+            "properties": {
+              "lastTransitionTime": {
+                "format": "date-time",
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "observedGeneration": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "lastTransitionTime",
+              "reason",
+              "status",
+              "type"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array",
+          "x-kubernetes-list-map-keys": [
+            "type"
+          ],
+          "x-kubernetes-list-type": "map"
+        },
+        "connectionDetails": {
+          "properties": {
+            "lastPublishedTime": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "spec"
+  ],
+  "type": "object"
+}
